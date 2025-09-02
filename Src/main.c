@@ -1,9 +1,9 @@
 /* USER CODE BEGIN Header */
 /**
-  **************************
+  ******************************************************************************
   * @file           : main.c
   * @brief          : Main program body
-  **************************
+  ******************************************************************************
   * @attention
   *
   * Copyright (c) 2025 STMicroelectronics.
@@ -13,7 +13,7 @@
   * in the root directory of this software component.
   * If no LICENSE file comes with this software, it is provided AS-IS.
   *
-  **************************
+  ******************************************************************************
   */
 /* USER CODE END Header */
 /* Includes ------------------------------------------------------------------*/
@@ -74,6 +74,7 @@ void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart)
     HAL_UART_Receive_IT(&huart2, &rx_data, 1);
   }
 }
+
 // Callback que se ejecuta cuando ocurre una interrupción externa (Botón B1)
 void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin)
 {
@@ -127,7 +128,7 @@ int main(void)
   HAL_UART_Receive_IT(&huart2, &rx_data, 1);
 
   // Mensaje de bienvenida por UART
-  char *welcome_msg = "Sistema de Control Basico - !!!!!\r\n";
+  char *welcome_msg = "Sistema de Control Basico - Listo\r\n";
   HAL_UART_Transmit(&huart2, (uint8_t*)welcome_msg, strlen(welcome_msg), 100);
   /* USER CODE END 2 */
 
@@ -135,25 +136,26 @@ int main(void)
   /* USER CODE BEGIN WHILE */
   while (1)
   {
-     // ---- Heartbeat LED ----
+        // ---- Heartbeat LED ----
     static uint32_t last_heartbeat_time = 0;
     if (HAL_GetTick() - last_heartbeat_time >= 5000) // Cada 500 ms
     {
       HAL_GPIO_TogglePin(LD2_GPIO_Port, LD2_Pin); // Cambia el estado del LED LD2
       last_heartbeat_time = HAL_GetTick();
     }
-    s alvjkfjafja
+
     // ---- Procesamiento del Botón ----
     if (button_flag == 1)
     {
       // 1. Encender LED Externo
       HAL_GPIO_WritePin(LED_EXT_GPIO_Port, LED_EXT_Pin, GPIO_PIN_SET); // Enciende LED_EXT
+      HAL_GPIO_WritePin(LD2_GPIO_Port, LD2_Pin, GPIO_PIN_SET); // Enciende L2
 
       // 2. Calcular cuándo apagarlo (3 segundos desde ahora)
-      led_ext_off_time = HAL_GetTick() + 8000;
+      led_ext_off_time = HAL_GetTick() + 7000;
 
       // 3. Enviar mensaje por UART
-      sprintf(tx_buffer, "Boton B1 presionado! LED EXT ON. activo\r\n");
+      sprintf(tx_buffer, "Boton B1 presionado! LED EXT encendidoooo(ON). \r\n");
       HAL_UART_Transmit(&huart2, (uint8_t*)tx_buffer, strlen(tx_buffer), 100);
 
       // 4. Limpiar el flag
@@ -169,7 +171,7 @@ int main(void)
       HAL_GPIO_WritePin(LED_EXT_GPIO_Port, LED_EXT_Pin, GPIO_PIN_RESET); // Apaga LED_EXT
 
       // 2. Enviar mensaje por UART (opcional)
-      sprintf(tx_buffer, "LED EXT OFF (timeout). se acabo el tiempo\r\n");
+      sprintf(tx_buffer, "LED EXT OFF (sin tiempo(timeout)).\r\n");
       HAL_UART_Transmit(&huart2, (uint8_t*)tx_buffer, strlen(tx_buffer), 100);
 
       // 3. Resetear el tiempo de apagado a 0 (para no volver a apagarlo)
